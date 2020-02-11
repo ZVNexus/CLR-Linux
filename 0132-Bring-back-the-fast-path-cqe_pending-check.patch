@@ -1,0 +1,26 @@
+From 012f701f77df45c4a540e00414e4d5a7a8a85fd9 Mon Sep 17 00:00:00 2001
+From: Dongli Zhang <dongli.zhang@oracle.com>
+Date: Sat, 6 Apr 2019 08:31:51 -0700
+Subject: [PATCH] Bring back the fast path cqe_pending check
+
+Was removed in 0b2a8a9f4b564c7d923597828d93cd1f69ce40e0.
+---
+ drivers/nvme/host/pci.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 365a2ddbeaa7..be19e7d98674 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1054,6 +1054,9 @@ static int nvme_poll_irqdisable(struct nvme_queue *nvmeq, unsigned int tag)
+ 	u16 start, end;
+ 	int found;
+ 
++	if (!nvme_cqe_pending(nvmeq))
++		return 0;
++
+ 	/*
+ 	 * For a poll queue we need to protect against the polling thread
+ 	 * using the CQ lock.  For normal interrupt driven threads we have
+-- 
+2.25.0
