@@ -54,6 +54,7 @@ Patch27: 27-x86-microcode-Force-update-a-uCode-even-if-the-rev-i.patch
 Patch28: 28-x86-microcode-echo-2-reload-to-force-load-ucode.patch
 Patch29: 29-fix-bug-in-ucode-force-reload-revision-check.patch
 Patch30: 30-nvme-workaround.patch
+Patch32: 32-Bring-back-the-fast-path-cqe_pending-check.patch
 
 # CVEs
 Patch31: patches/CVE-2019-12379.patch
@@ -131,6 +132,7 @@ Linux kernel build files
 %patch29 -p1
 %patch30 -p1
 %patch31 -p1
+%patch32 -p1
 
 cp %{SOURCE1} .
 
