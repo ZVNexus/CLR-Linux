@@ -70,6 +70,7 @@ Patch0129: 0129-fix-bug-in-ucode-force-reload-revision-check.patch
 #Patch0130: 0130-add-workaround-for-binutils-optimization.patch
 Patch0131: 0131-nvme-workaround.patch
 Patch0132: 0132-Bring-back-the-fast-path-cqe_pending-check.patch
+Patch0133: 0133-Don-t-report-an-error-if-PowerClamp-is-run-an-AMD-CP.patch
 #Serie.end
 
 #Serie1.name WireGuard

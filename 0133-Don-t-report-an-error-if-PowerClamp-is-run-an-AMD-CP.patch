@@ -1,0 +1,28 @@
+From e427ce4332ff24da3c749dd63663c5010afff950 Mon Sep 17 00:00:00 2001
+From: Alexander Koskovich <zvnexus@outlook.com>
+Date: Wed, 12 Feb 2020 22:47:12 +0000
+Subject: [PATCH] Don't report an error if PowerClamp is run an AMD CPU
+
+---
+ drivers/thermal/intel/intel_powerclamp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
+index 53216dcbe173..604c257afce2 100644
+--- a/drivers/thermal/intel/intel_powerclamp.c
++++ b/drivers/thermal/intel/intel_powerclamp.c
+@@ -659,6 +659,11 @@ MODULE_DEVICE_TABLE(x86cpu, intel_powerclamp_ids);
+ static int __init powerclamp_probe(void)
+ {
+ 
++	if (c->x86_vendor == X86_VENDOR_AMD) {
++		pr_info("Intel PowerClamp does not support AMD Processors\n");
++		return -ENODEV;
++    }
++
+ 	if (!x86_match_cpu(intel_powerclamp_ids)) {
+ 		pr_err("CPU does not support MWAIT\n");
+ 		return -ENODEV;
+-- 
+2.25.0
+
