@@ -1,0 +1,48 @@
+From 32405f0dc5aba24d622cbc2e078a2577cf55e5e1 Mon Sep 17 00:00:00 2001
+From: Alexander Koskovich <zvnexus@outlook.com>
+Date: Wed, 12 Feb 2020 22:47:12 +0000
+Subject: [PATCH] thermal/intel_powerclamp: Don't report an error for AMD CPUs
+
+Resolves dmesg error "intel_powerclamp: CPU does not support MWAIT".
+
+The error that is outputted in dmesg prior to this patch
+is innacurate, AMD Ryzen CPUs do support MWAIT. We could
+also add the AMD vendor to the MWAIT check, but even though
+AMD CPUs do support MWAIT, they fail the C-state package
+check so it's better just to bail out in the beginning.
+
+Signed-off-by: Alexander Koskovich <zvnexus@outlook.com>
+---
+ drivers/thermal/intel/intel_powerclamp.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
+index 53216dcbe173..3c5b25bfa596 100644
+--- a/drivers/thermal/intel/intel_powerclamp.c
++++ b/drivers/thermal/intel/intel_powerclamp.c
+@@ -650,6 +650,11 @@ static struct thermal_cooling_device_ops powerclamp_cooling_ops = {
+ 	.set_cur_state = powerclamp_set_cur_state,
+ };
+ 
++static const struct x86_cpu_id amd_cpu[] = {
++	{ X86_VENDOR_AMD },
++	{},
++};
++
+ static const struct x86_cpu_id __initconst intel_powerclamp_ids[] = {
+ 	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_MWAIT },
+ 	{}
+@@ -659,6 +664,11 @@ MODULE_DEVICE_TABLE(x86cpu, intel_powerclamp_ids);
+ static int __init powerclamp_probe(void)
+ {
+ 
++	if (x86_match_cpu(amd_cpu)) {
++		pr_info("Intel PowerClamp does not support AMD CPUs\n");
++		return -ENODEV;
++	}
++
+ 	if (!x86_match_cpu(intel_powerclamp_ids)) {
+ 		pr_err("CPU does not support MWAIT\n");
+ 		return -ENODEV;
+-- 
+2.25.0
