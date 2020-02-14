@@ -1,17 +1,11 @@
-#
-# note to self: Linus releases need to be named 5.x.0 not 5.x or various
-# things break
-# 
-#
-
 Name:           linux
-Version:        5.5.3
-Release:        905
+Version:        5.6.0
+Release:        906
 License:        GPL-2.0
 Summary:        The Linux kernel
 Url:            http://www.kernel.org/
 Group:          kernel
-Source0:        https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.5.3.tar.xz
+Source0:        https://git.kernel.org/torvalds/t/linux-5.6-rc1.tar.gz
 Source1:        config
 Source2:        cmdline
 
@@ -29,54 +23,40 @@ Requires: linux-license = %{version}-%{release}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-#cve.start cve patches from 0001 to 050
-Patch001: CVE-2019-12379.patch
-#cve.end
+# Clear Linux
+Patch01: 01-i8042-decrease-debug-message-level-to-info.patch
+Patch02: 02-Increase-the-ext4-default-commit-age.patch
+Patch03: 03-silence-rapl.patch
+Patch04: 04-pci-pme-wakeups.patch
+Patch05: 05-ksm-wakeups.patch
+Patch06: 06-intel_idle-tweak-cpuidle-cstates.patch
+Patch07: 07-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
+Patch08: 08-smpboot-reuse-timer-calibration.patch
+Patch09: 09-raid6-add-Kconfig-option-to-skip-raid6-benchmarking.patch
+Patch10: 10-Initialize-ata-before-graphics.patch
+Patch11: 11-give-rdrand-some-credit.patch
+Patch12: 12-allow-bigger-tcp-memory-tuning.patch
+Patch13: 13-kernel-time-reduce-ntp-wakeups.patch
+Patch14: 14-init-wait-for-partition-and-retry-scan.patch
+Patch15: 15-print-fsync-count-for-bootchart.patch
+Patch16: 16-Add-boot-option-to-allow-unsigned-modules.patch
+Patch17: 17-Enable-stateless-firmware-loading.patch
+Patch18: 18-Migrate-some-systemd-defaults-to-the-kernel-defaults.patch
+Patch19: 19-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
+Patch20: 20-add-scheduler-turbo3-patch.patch
+Patch21: 21-use-lfence-instead-of-rep-and-nop.patch
+Patch22: 22-do-accept-in-LIFO-order-for-cache-efficiency.patch
+Patch23: 23-zero-extra-registers.patch
+Patch24: 24-locking-rwsem-spin-faster.patch
+Patch25: 25-ata-libahci-ignore-staggered-spin-up.patch
+Patch26: 26-print-CPU-that-faults.patch
+Patch27: 27-x86-microcode-Force-update-a-uCode-even-if-the-rev-i.patch
+Patch28: 28-x86-microcode-echo-2-reload-to-force-load-ucode.patch
+Patch29: 29-fix-bug-in-ucode-force-reload-revision-check.patch
+Patch30: 30-nvme-workaround.patch
 
-#mainline: Mainline patches, upstream backport and fixes from 0051 to 0099
-Patch0051: 0051-rcu-nocb-Fix-dump_tree-hierarchy-print-always-active.patch
-#mainline.end
-
-#Serie.clr 01XX: Clear Linux patches
-Patch0101: 0101-i8042-decrease-debug-message-level-to-info.patch
-Patch0102: 0102-Increase-the-ext4-default-commit-age.patch
-Patch0103: 0103-silence-rapl.patch
-Patch0104: 0104-pci-pme-wakeups.patch
-Patch0105: 0105-ksm-wakeups.patch
-Patch0106: 0106-intel_idle-tweak-cpuidle-cstates.patch
-Patch0107: 0107-bootstats-add-printk-s-to-measure-boot-time-in-more-.patch
-Patch0108: 0108-smpboot-reuse-timer-calibration.patch
-Patch0109: 0109-raid6-add-Kconfig-option-to-skip-raid6-benchmarking.patch
-Patch0110: 0110-Initialize-ata-before-graphics.patch
-Patch0111: 0111-give-rdrand-some-credit.patch
-Patch0112: 0112-ipv4-tcp-allow-the-memory-tuning-for-tcp-to-go-a-lit.patch
-Patch0113: 0113-kernel-time-reduce-ntp-wakeups.patch
-Patch0114: 0114-init-wait-for-partition-and-retry-scan.patch
-Patch0115: 0115-print-fsync-count-for-bootchart.patch
-Patch0116: 0116-Add-boot-option-to-allow-unsigned-modules.patch
-Patch0117: 0117-Enable-stateless-firmware-loading.patch
-Patch0118: 0118-Migrate-some-systemd-defaults-to-the-kernel-defaults.patch
-Patch0119: 0119-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
-Patch0120: 0120-add-scheduler-turbo3-patch.patch
-Patch0121: 0121-use-lfence-instead-of-rep-and-nop.patch
-Patch0122: 0122-do-accept-in-LIFO-order-for-cache-efficiency.patch
-Patch0123: 0123-zero-extra-registers.patch
-Patch0124: 0124-locking-rwsem-spin-faster.patch
-Patch0125: 0125-ata-libahci-ignore-staggered-spin-up.patch
-Patch0126: 0126-print-CPU-that-faults.patch
-Patch0127: 0127-x86-microcode-Force-update-a-uCode-even-if-the-rev-i.patch
-Patch0128: 0128-x86-microcode-echo-2-reload-to-force-load-ucode.patch
-Patch0129: 0129-fix-bug-in-ucode-force-reload-revision-check.patch
-#Patch0130: 0130-add-workaround-for-binutils-optimization.patch
-Patch0131: 0131-nvme-workaround.patch
-#Serie.end
-
-#Serie1.name WireGuard
-#Serie1.git  https://git.zx2c4.com/wireguard-linux-compat
-#Serie1.cmt  7a11a53c5a8cf54d1b4b12e2359d1dc4a2ebd751
-#Serie1.tag  v0.0.20200205
-Patch1001: 1001-WireGuard-fast-modern-secure-kernel-VPN-tunnel.patch
-#Serie1.end
+# CVEs
+Patch31: patches/CVE-2019-12379.patch
 
 %description
 The Linux kernel.
@@ -117,53 +97,40 @@ Requires:       linux-license = %{version}-%{release}
 Linux kernel build files
 
 %prep
-%setup -q -n linux-5.5.3
+%setup -q -n linux-5.6-rc1
 
-#cve.patch.start cve patches
-%patch0001 -p1
-#cve.patch.end
-
-#mainline.patch.start Mainline patches, upstream backport and fixes
-%patch0051 -p1
-#mainline.patch.end
-
-#Serie.patch.start Clear Linux patches
-%patch0101 -p1
-%patch0102 -p1
-%patch0103 -p1
-%patch0104 -p1
-%patch0105 -p1
-%patch0106 -p1
-%patch0107 -p1
-%patch0108 -p1
-%patch0109 -p1
-%patch0110 -p1
-%patch0111 -p1
-%patch0112 -p1
-%patch0113 -p1
-%patch0114 -p1
-%patch0115 -p1
-%patch0116 -p1
-%patch0117 -p1
-%patch0118 -p1
-%patch0119 -p1
-%patch0120 -p1
-%patch0121 -p1
-%patch0122 -p1
-%patch0123 -p1
-%patch0124 -p1
-%patch0125 -p1
-%patch0126 -p1
-%patch0127 -p1
-%patch0128 -p1
-%patch0129 -p1
-#%patch0130 -p1
-%patch0131 -p1
-#Serie.patch.end
-
-#Serie1.patch.start
-%patch1001 -p1
-#Serie1.patch.end
+# Clear Linux
+%patch01 -p1
+%patch02 -p1
+%patch03 -p1
+%patch04 -p1
+%patch05 -p1
+%patch06 -p1
+%patch07 -p1
+%patch08 -p1
+%patch09 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
 
 cp %{SOURCE1} .
 
