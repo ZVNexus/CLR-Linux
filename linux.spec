@@ -12,7 +12,7 @@ Source2:        cmdline
 %define ktarget  native
 %define kversion %{version}-%{release}.%{ktarget}
 
-BuildRequires:  buildreq-kernel
+BuildRequires:  buildreq-kernel llvm
 
 Requires: systemd-bin
 Requires: init-rdahead-extras
@@ -46,7 +46,6 @@ Patch19: 19-xattr-allow-setting-user.-attributes-on-symlinks-by-.patch
 Patch20: 20-add-scheduler-turbo3-patch.patch
 Patch21: 21-use-lfence-instead-of-rep-and-nop.patch
 Patch22: 22-do-accept-in-LIFO-order-for-cache-efficiency.patch
-Patch23: 23-zero-extra-registers.patch
 Patch24: 24-locking-rwsem-spin-faster.patch
 Patch25: 25-ata-libahci-ignore-staggered-spin-up.patch
 Patch26: 26-print-CPU-that-faults.patch
@@ -56,6 +55,7 @@ Patch29: 29-fix-bug-in-ucode-force-reload-revision-check.patch
 Patch30: 30-nvme-workaround.patch
 Patch32: 32-Bring-back-the-fast-path-cqe_pending-check.patch
 Patch33: 33-thermal-intel_powerclamp-Don-t-report-an-error-for-A.patch
+Patch34: 34-objtool-warning-uses-BP-as-a-scratch-register-with-c.patch
 
 # CVEs
 Patch31: patches/CVE-2019-12379.patch
@@ -124,7 +124,6 @@ Linux kernel build files
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
 %patch24 -p1
 %patch25 -p1
 %patch26 -p1
@@ -135,6 +134,7 @@ Linux kernel build files
 %patch31 -p1
 %patch32 -p1
 %patch33 -p1
+%patch34 -p1
 
 cp %{SOURCE1} .
 
@@ -147,11 +147,11 @@ BuildKernel() {
 
     perl -p -i -e "s/^EXTRAVERSION.*/EXTRAVERSION = ${ExtraVer}/" Makefile
 
-    make O=${Target} -s mrproper
+    make CC=clang HOSTCC=clang O=${Target} -s mrproper
     cp config ${Target}/.config
 
-    make O=${Target} -s ARCH=${Arch} olddefconfig
-    make O=${Target} -s ARCH=${Arch} CONFIG_DEBUG_SECTION_MISMATCH=y %{?_smp_mflags} %{?sparse_mflags}
+    make CC=clang HOSTCC=clang O=${Target} -s ARCH=${Arch} olddefconfig
+    make CC=clang HOSTCC=clang O=${Target} -s ARCH=${Arch} CONFIG_DEBUG_SECTION_MISMATCH=y %{?_smp_mflags} %{?sparse_mflags}
 }
 
 BuildKernel %{ktarget}
@@ -175,7 +175,7 @@ InstallKernel() {
     chmod 755 ${KernelDir}/org.clearlinux.${Target}.%{version}-%{release}
 
     mkdir -p %{buildroot}/usr/lib/modules
-    make O=${Target} -s ARCH=${Arch} INSTALL_MOD_PATH=%{buildroot}/usr modules_install
+    make CC=clang HOSTCC=clang O=${Target} -s ARCH=${Arch} INSTALL_MOD_PATH=%{buildroot}/usr modules_install
 
     rm -f %{buildroot}/usr/lib/modules/${Kversion}/build
     rm -f %{buildroot}/usr/lib/modules/${Kversion}/source

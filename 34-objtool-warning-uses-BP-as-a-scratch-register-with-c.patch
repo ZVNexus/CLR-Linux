@@ -1,0 +1,26 @@
+From 72066dc59afce7a8d7e8e98cf1292dd810bf1411 Mon Sep 17 00:00:00 2001
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+Date: Fri, 14 Feb 2020 03:05:10 -0500
+Subject: [PATCH] objtool warning "uses BP as a scratch register" with clang-9
+
+Signed-off-by: Alexander Koskovich <zvnexus@outlook.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 84b71845c43f..a39127b184ca 100644
+--- a/Makefile
++++ b/Makefile
+@@ -761,7 +761,7 @@ endif
+ 
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+ ifdef CONFIG_FRAME_POINTER
+-KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
++KBUILD_CFLAGS  += -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -fno-optimize-sibling-calls
+ else
+ # Some targets (ARM with Thumb2, for example), can't be built with frame
+ # pointers.  For those, we don't have FUNCTION_TRACER automatically
+-- 
+2.25.0
+
